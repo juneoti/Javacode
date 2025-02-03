@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="NewWizardAction">
+	</section>
+	<section name="ResourceNavigator">
+		<item key="ResourceViewer.STORE_SORT_TYPE" value="1"/>
+		<item key="ResourceWorkingSetFilter.STORE_WORKING_SET" value="Aggregate for window 1727154088983"/>
+	</section>
+	<section name="SmartImportWizard">
+		<item key="SmartImportRootWizardPage.STORE_HIDE_ALREADY_OPEN" value="false"/>
+		<item key="SmartImportRootWizardPage.STORE_CLOSE_IMPORTED" value="false"/>
+		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
+		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
+		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java00_Member\src\edu\java\member06"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java00_Member\src\edu\java\member05"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java00_Member\src\edu\java\member03"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java16_Thread"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java14_Lambda"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java10_Interface\src\edu\java\interface04"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java10_Interface\src\edu\java\interface03"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java10_Interface\src\edu\java\interface02"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java10_Interface\src\edu\java\interface01"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java09_Inheritance\src\edu\java\inherit12"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java09_Inheritance\src\edu\java\inherit11"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java09_Inheritance\src\edu\java\inherit10"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java09_Inheritance\src\edu\java\inherit09"/>
+			<item value="C:\Users\sdedu\Desktop\JAVA_CODES\Java09_Inheritance\src\edu\java\inherit08"/>
+		</list>
+	</section>
+</section>

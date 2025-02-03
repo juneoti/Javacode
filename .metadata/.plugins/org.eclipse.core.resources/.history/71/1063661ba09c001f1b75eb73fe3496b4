@@ -1,0 +1,6 @@
+package project_hotel;
+
+public interface ReviewDAO {
+	public void addReview(ReviewVO reviewVO);
+	public void deleteReview(String customerId);
+}

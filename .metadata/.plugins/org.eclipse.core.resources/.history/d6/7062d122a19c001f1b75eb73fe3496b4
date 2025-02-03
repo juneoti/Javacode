@@ -1,0 +1,316 @@
+package project_hotel;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+import oracle.jdbc.OracleDriver;
+
+public class CustomerDAOImple implements CustomerDAO, CustomerQuery{
+
+   // 싱글톤 디자인 패턴 적용 시작
+   
+   // 1. private static 자기 자신 타입의 변수 선언
+   private static CustomerDAOImple instance = null;
+   
+   // 2. private 생성자
+   private CustomerDAOImple() {
+   }
+   
+   // 3. public static 메소드 - 인스턴스를 리턴하는 메소드 구현
+   public static CustomerDAOImple getInstance() {
+      if(instance == null) {
+         instance = new CustomerDAOImple();
+      }
+      return instance;
+   }
+   
+   //회원 등록
+   @Override
+   public int insert(CustomerVO vo) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+      // PreparedStatement : 매개변수를 갖고 있는 SQL 문장을 활용하기 위한 클래스
+      //                     Statement와 상속관계
+      
+      try {
+         // Oracle JDBC 드라이버를 메모리에 로드
+         DriverManager.registerDriver(new OracleDriver());
+         System.out.println("드라이버 로드 성공");
+         
+         // DB와 Connection(연결)을 맺음
+         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+         System.out.println("DB 연결 성공");
+         
+         // Connection 객체를 사용하여 PreparedStatement 객체를 생성
+         pstmt = conn.prepareStatement(SQL_INSERT);
+         
+         
+         // SQL 문장 완성 - SQL_INSERT 쿼리의 ?를 채워주는 코드
+         pstmt.setString(1, vo.getCustomerID());
+         pstmt.setString(2, vo.getCustomerPW());
+         pstmt.setString(3, vo.getCustomerName());
+         pstmt.setString(4, vo.getCustomerPhone());
+         pstmt.setString(5, vo.getCustomerEmail());
+         pstmt.setString(6, vo.getCustomerBirth());
+         pstmt.setString(7, vo.getCustomerGender());
+         // SQL 쿼리의 ? 순서와 parameterIndex의 값은 동일하게 지정
+         // 예시) ?가 첫 번째이면 parameterIndex = 1
+         
+         // setInt() : DB의 Number 타입
+         // setString() : DB의 varchar, varchar2 타입
+         // setFloat() : DB의 Float 타입
+         // setDate() : DB의 Date 타입
+         
+         // SQL 문장 실행(DB 서버로 SQL 전송)
+         int result = pstmt.executeUpdate();
+         // DB 서버가 보낸 결과 확인/처리
+         System.out.println(result + "회원에 가입되었습니다.");
+         
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } finally {
+         try {
+            pstmt.close();
+            conn.close();
+         } catch (SQLException e) {
+            e.printStackTrace();
+         }
+      }
+      return 1; 
+   }
+
+   //회원 전체 검색
+   @Override
+   public ArrayList<CustomerVO> select() {
+      ArrayList<CustomerVO> list = null;
+      Connection conn = null;
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
+      
+      try {
+         DriverManager.registerDriver(new OracleDriver());
+         System.out.println("드라이버 로드 성공");
+         
+
+         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+         System.out.println("DB 연결 성공");
+
+         pstmt = conn.prepareStatement(SQL_SELECT);
+         
+
+         rs = pstmt.executeQuery();
+   
+         list = new ArrayList<>();
+         while(rs.next()) { // 레코드가 존재할 때까지
+            String customerId = rs.getString(1); // ID 컬럼
+            String customerPw = rs.getString(2); // PW 컬럼
+            String customerName = rs.getString(3); // NAME 컬럼
+            String customerPhone = rs.getString(4); // PHONE 컬럼
+            String customerEmail = rs.getString(5);   // EMAIL 컬럼
+            String customerDateOfBirth = rs.getString(6);
+            String customerGender = rs.getString(7);
+            
+            CustomerVO vo = new CustomerVO(customerId, customerPw, customerName, customerPhone, customerEmail, customerDateOfBirth, customerGender);
+            list.add(vo);
+         }
+         
+      } catch (SQLException e) {
+
+         e.printStackTrace();
+      } finally {
+         try {
+            rs.close();
+        	pstmt.close();
+            conn.close();
+         } catch (SQLException e) {
+            e.printStackTrace();
+         }
+      }
+      return list;
+   }
+
+   //회원 아이디를 통해 검색
+   @Override
+   public CustomerVO select(String customerId) {
+      CustomerVO vo = null;
+      Connection conn = null;
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
+      
+      try {
+         DriverManager.registerDriver(new OracleDriver());
+         System.out.println("드라이버 로드 성공");
+         
+
+         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+         System.out.println("DB 연결 성공");
+
+         pstmt = conn.prepareStatement(SQL_SELECT_BY_ID);
+         
+         // 5. SQL 문장 작성
+         pstmt.setString(1, customerId);
+         rs = pstmt.executeQuery();
+   
+   
+         if(rs.next()) { // 레코드가 존재할 때까지
+             customerId = rs.getString(1); // ID 컬럼
+             String customerPw = rs.getString(2); // PW 컬럼
+             String customerName = rs.getString(3); // NAME 컬럼
+             String customerPhone = rs.getString(4); // PHONE 컬럼
+             String customerEmail = rs.getString(5);   // EMAIL 컬럼
+             String customerDateOfBirth = rs.getString(6);
+             String customerGender = rs.getString(7);
+            vo = new CustomerVO(customerId, customerPw, customerName, customerPhone, customerEmail, customerDateOfBirth, customerGender);
+
+         }
+         
+      } catch (SQLException e) {
+
+         e.printStackTrace();
+      } finally {
+         try {
+            rs.close();
+        	pstmt.close();
+            conn.close();
+         } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      return vo;
+   }
+
+   //회원 정보 수정
+   @Override
+   public int update(String customerId, CustomerVO vo) {
+      Connection conn = null;
+      PreparedStatement pstmt = null;
+      // PreparedStatement : 매개변수를 갖고 있는 SQL 문장을 활용하기 위한 클래스
+      //                     Statement와 상속관계
+      
+      try {
+         // Oracle JDBC 드라이버를 메모리에 로드
+         DriverManager.registerDriver(new OracleDriver());
+         System.out.println("드라이버 로드 성공");
+         
+         // DB와 Connection(연결)을 맺음
+         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+         System.out.println("DB 연결 성공");
+         
+         // Connection 객체를 사용하여 PreparedStatement 객체를 생성
+         pstmt = conn.prepareStatement(SQL_UPDATE);
+         
+         // SQL 문장 완성 - SQL_UPDATE 쿼리의 ?를 채워주는 코드
+         pstmt.setString(1, vo.getCustomerID());
+         pstmt.setString(2, vo.getCustomerPW());
+         pstmt.setString(3, vo.getCustomerName());
+         pstmt.setString(4, vo.getCustomerPhone());
+         pstmt.setString(5, vo.getCustomerEmail());
+         pstmt.setString(6, vo.getCustomerBirth());
+         pstmt.setString(7, vo.getCustomerGender());
+         pstmt.setString(8, vo.getCustomerID());
+         // SQL 쿼리의 ? 순서와 parameterIndex의 값은 동일하게 지정
+         // 예시) ?가 첫 번째이면 parameterIndex = 1
+         
+         // setInt() : DB의 Number 타입
+         // setString() : DB의 varchar, varchar2 타입
+         // setFloat() : DB의 Float 타입
+         // setDate() : DB의 Date 타입
+         
+         // SQL 문장 실행(DB 서버로 SQL 전송)
+         pstmt.executeUpdate();
+         
+         // DB 서버가 보낸 결과 확인/처리
+         System.out.println(customerId + " 회원님의 계정 정보가 수정되었습니다");
+         
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } finally {
+         try {
+            pstmt.close();
+            conn.close();
+         } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      return 1;
+   }
+   
+   //회원 정보 삭제
+   @Override
+   public int delete(String customerId) {
+      Connection conn = null;
+      PreparedStatement pstmt = null;
+      // PreparedStatement : 매개변수를 갖고 있는 SQL 문장을 활용하기 위한 클래스
+      //                     Statement와 상속관계
+      
+      try {
+         // Oracle JDBC 드라이버를 메모리에 로드
+         DriverManager.registerDriver(new OracleDriver());
+         System.out.println("드라이버 로드 성공");
+         
+         // DB와 Connection(연결)을 맺음
+         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+         System.out.println("DB 연결 성공");
+         
+         // Connection 객체를 사용하여 PreparedStatement 객체를 생성
+         pstmt = conn.prepareStatement(SQL_DELETE);
+         
+         
+         // SQL 문장 완성 - SQL_Delete 쿼리의 ?를 채워주는 코드
+         pstmt.setString(1, customerId);
+         // SQL 쿼리의 ? 순서와 parameterIndex의 값은 동일하게 지정
+         // 예시) ?가 첫 번째이면 parameterIndex = 1
+         
+         // setInt() : DB의 Number 타입
+         // setString() : DB의 varchar, varchar2 타입
+         // setFloat() : DB의 Float 타입
+         // setDate() : DB의 Date 타입
+         
+         // SQL 문장 실행(DB 서버로 SQL 전송)
+         int result = pstmt.executeUpdate();
+         
+         // DB 서버가 보낸 결과 확인/처리
+         System.out.println(result + "님의 계정이 삭제됐습니다.");
+         
+      } catch (SQLException e) {
+         e.printStackTrace();
+      } finally {
+         try {
+            pstmt.close();
+            conn.close();
+         } catch (SQLException e) {
+            e.printStackTrace();
+         }
+      }
+      return 1;
+   }
+
+   //회원 아이디 확인
+   public boolean checkId(String id) {
+	   Connection conn = null;
+	      PreparedStatement pstmt = null;
+	      try {
+	          // Oracle JDBC 드라이버를 메모리에 로드
+	          DriverManager.registerDriver(new OracleDriver());
+	          System.out.println("드라이버 로드 성공");
+	          
+	          // DB와 Connection(연결)을 맺음
+	          conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	          System.out.println("DB 연결 성공");
+	          
+	          // Connection 객체를 사용하여 PreparedStatement 객체를 생성
+	       pstmt = conn.prepareStatement(SQL_CHECKID); 
+            
+           pstmt.setString(1, id);
+           ResultSet rs = pstmt.executeQuery();
+           if (rs.next()) {
+               return rs.getInt(1) > 0; // 중복 아이디가 있으면 true 반환
+           }
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+       return false; // 예외 발생 시 false 반환
+   }
+}

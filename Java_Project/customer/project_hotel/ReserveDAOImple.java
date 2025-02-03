@@ -1,0 +1,349 @@
+package project_hotel;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import oracle.jdbc.OracleDriver;
+
+public class ReserveDAOImple implements ReserveDAO, ReserveQuery {
+	   // 싱글톤 디자인 패턴 적용 시작
+	   
+	   // 1. private static 자기 자신 타입의 변수 선언
+	   private static ReserveDAOImple instance = null;
+	   
+	   // 2. private 생성자
+	   private ReserveDAOImple() {
+	   }
+	   
+	   // 3. public static 메소드 - 인스턴스를 리턴하는 메소드 구현
+	   public static ReserveDAOImple getInstance() {
+	      if(instance == null) {
+	         instance = new ReserveDAOImple();
+	      }
+	      return instance;
+	   }
+	   
+	   // 예약 등록
+	   public void reserve(ReserveVO rsvo) {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+	      // PreparedStatement : 매개변수를 갖고 있는 SQL 문장을 활용하기 위한 클래스
+	      //                     Statement와 상속관계
+	      
+	      try {
+	         // Oracle JDBC 드라이버를 메모리에 로드
+	         DriverManager.registerDriver(new OracleDriver());
+	         System.out.println("드라이버 로드 성공");
+	         
+	         // DB와 Connection(연결)을 맺음
+	         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	         System.out.println("DB 연결 성공");
+	         
+	         // Connection 객체를 사용하여 PreparedStatement 객체를 생성
+	         pstmt = conn.prepareStatement(SQL_RESERVE);
+	         
+	         
+	         pstmt.setDate(1, java.sql.Date.valueOf(rsvo.getCheckInDate()));
+	         pstmt.setDate(2, java.sql.Date.valueOf(rsvo.getCheckOutDate()));
+	         pstmt.setString(3, rsvo.getCustomerId());
+	         pstmt.setInt(4, rsvo.getRoomId());
+	         pstmt.setDouble(5, rsvo.getTotalPrice());
+	         pstmt.executeUpdate();
+
+	         System.out.println("예약이 등록되었습니다.");
+	         
+	      } catch (SQLException e) {
+	         e.printStackTrace();
+	      } finally {
+	         try {
+	            pstmt.close();
+	            conn.close();
+	         } catch (SQLException e) {
+	            e.printStackTrace();
+	         }
+	      }
+	   }
+	   
+	   // 예약 전체 정보 배열에 등록
+	   @Override
+	   public List<ReserveVO> selectAllByCustomerId(String customerId) {
+	        List<ReserveVO> reservations = new ArrayList<>();
+	        Connection conn = null;
+	        PreparedStatement pstmt = null;
+	        ResultSet rs = null;
+
+	        try {
+	            DriverManager.registerDriver(new OracleDriver());
+	            conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	            pstmt = conn.prepareStatement("SELECT * FROM RESERVATIONS WHERE CUSTOMER_ID = ?");
+	            pstmt.setString(1, customerId);
+	            rs = pstmt.executeQuery();
+
+	            while (rs.next()) {
+	                int reserveId = rs.getInt("RESERVE_ID");
+	                String checkIn = rs.getString("CHECK_IN_DATE");
+	                String checkOut = rs.getString("CHECK_OUT_DATE");
+	                String custId = rs.getString("CUSTOMER_ID");
+	                int roomId = rs.getInt("ROOM_ID");
+	                double totalPrice = rs.getDouble("TOTAL_PRICE");
+	                
+	                ReserveVO reservation = new ReserveVO(reserveId, checkIn, checkOut, custId, roomId, totalPrice);
+	                reservations.add(reservation);
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+		         try {
+			            rs.close();
+			        	pstmt.close();
+			            conn.close();
+			         } catch (SQLException e) {
+			            e.printStackTrace();
+			         }
+	        }
+	        return reservations;
+	    }
+	   
+	   // 예약 전체 정보
+	   @Override
+	   public ArrayList<ReserveVO> select() {
+		      ArrayList<ReserveVO> list = null;
+		      Connection conn = null;
+		      PreparedStatement pstmt = null;
+		      ResultSet rs = null;
+		      
+		      try {
+		         DriverManager.registerDriver(new OracleDriver());
+		         System.out.println("드라이버 로드 성공");
+		         
+
+		         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+		         System.out.println("DB 연결 성공");
+
+		         pstmt = conn.prepareStatement(SQL_SELECT);
+		         
+
+		         rs = pstmt.executeQuery();
+		   
+		         list = new ArrayList<>();
+		         while(rs.next()) { // 레코드가 존재할 때까지
+		             int reserveId = rs.getInt(1);
+		             String checkIn = rs.getString(2);
+		             String checkOut = rs.getString(3);
+		             String customerId = rs.getString(4);
+		             int roomId = rs.getInt(5);
+		             double totalPrice = rs.getDouble(6);
+		            
+		            ReserveVO rsvo = new ReserveVO(reserveId, checkIn, checkOut, customerId, roomId, totalPrice);
+		            list.add(rsvo);
+		         }
+		         
+		      } catch (SQLException e) {
+
+		         e.printStackTrace();
+		      } finally {
+		         try {
+		            rs.close();
+		        	pstmt.close();
+		            conn.close();
+		         } catch (SQLException e) {
+		            e.printStackTrace();
+		         }
+		      }
+		      return list;
+		   }
+	   
+	   // customerId 값을 통해 해당 값을 가진 예약 정보 가져오기
+	   @Override         
+	   public ReserveVO select(String customerId) {
+		      ReserveVO rsvo = null;
+		      Connection conn = null;
+		      PreparedStatement pstmt = null;
+		      ResultSet rs = null;
+		      
+		      try {
+		         DriverManager.registerDriver(new OracleDriver());
+		         System.out.println("드라이버 로드 성공");
+		         
+
+		         conn = DriverManager.getConnection(URL, USER, PASSWORD);
+		         System.out.println("DB 연결 성공");
+
+		         pstmt = conn.prepareStatement(SQL_SELECT_BY_CUSTOMER);
+		         
+		         // 5. SQL 문장 작성
+		         pstmt.setString(1, customerId);
+		         rs = pstmt.executeQuery();
+		   
+		   
+		         if(rs.next()) { // 레코드가 존재할 때까지
+		             int reserveId = rs.getInt(1);
+		             String checkIn = rs.getString(2);
+		             String checkOut = rs.getString(3);
+		             customerId = rs.getString(4);
+		             int roomId = rs.getInt(5);
+		             double totalPrice = rs.getDouble(6);
+		             
+		            rsvo = new ReserveVO(reserveId, checkIn, checkOut, customerId, roomId, totalPrice);
+
+		         }
+		         
+		      } catch (SQLException e) {
+
+		         e.printStackTrace();
+		      } finally {
+		         try {
+		            rs.close();
+		        	pstmt.close();
+		            conn.close();
+		         } catch (SQLException e) {
+		            // TODO Auto-generated catch block
+		            e.printStackTrace();
+		         }
+		      }
+		      return rsvo;
+		   }
+	   
+	   // 예약 삭제
+	   @Override
+	   public int cancel(int reserveId) {
+	       Connection conn = null;
+	       PreparedStatement pstmt = null;
+	       PreparedStatement updatePstmt = null;
+
+	       try {
+	           DriverManager.registerDriver(new OracleDriver());
+	           System.out.println("드라이버 로드 성공");
+	           
+	           conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	           System.out.println("DB 연결 성공");
+
+	           int roomId = getRoomIdByReserveId(conn, reserveId);
+
+	           pstmt = conn.prepareStatement(SQL_CANCEL);
+	           pstmt.setInt(1, reserveId);
+	           pstmt.executeUpdate();
+	           System.out.println(reserveId + "행이 삭제됐습니다.");
+
+	           // ROOM_AVAILABILITY 업데이트
+	           if (roomId != -1) { // 유효한 roomId일 경우
+	               updatePstmt = conn.prepareStatement(SQL_UPDATE_AVAILABILITY);
+	               updatePstmt.setInt(1, roomId);
+	               updatePstmt.executeUpdate();
+	               System.out.println("객실 ID " + roomId + "의 예약 상태가 '가능'으로 변경되었습니다.");
+	           }
+	           
+	       } catch (SQLException e) {
+	           e.printStackTrace();
+	       } finally {
+	           try {
+	               if (updatePstmt != null) updatePstmt.close();
+	               if (pstmt != null) pstmt.close();
+	               if (conn != null) conn.close();
+	           } catch (SQLException e) {
+	               e.printStackTrace();
+	           }
+	       }
+	       return 1; // 성공적으로 처리되었다면 1 반환
+	   }
+
+	   // 예약 ID로부터 roomId를 조회하는 메서드
+	   private int getRoomIdByReserveId(Connection conn, int reserveId) {
+	       String query = "SELECT ROOM_ID FROM RESERVATIONS WHERE RESERVE_ID = ?";
+	       try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+	           pstmt.setInt(1, reserveId);
+	           ResultSet rs = pstmt.executeQuery();
+	           if (rs.next()) {
+	               return rs.getInt("ROOM_ID");
+	           }
+	       } catch (SQLException e) {
+	           e.printStackTrace();
+	       }
+	       return -1; // 예약 ID가 존재하지 않는 경우
+	   }
+	   
+	   public int checkId(int contactId) {
+			int result = 0;
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try {
+				DriverManager.registerDriver(new OracleDriver());
+				System.out.println("드라이버 로드 성공");
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				System.out.println("DB 연결 성공");
+
+				pstmt = conn.prepareStatement(SQL_CHECKID);
+				pstmt.setInt(1, contactId);
+				rs = pstmt.executeQuery();
+				if (rs.next()) {
+					result = rs.getInt(1);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					rs.close();
+					pstmt.close();
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return result;
+		}
+	   
+	   @Override
+	   // 모든 예약 삭제 (customerId를 베이스로)
+	   public int delete(String customerId) {
+	       Connection conn = null;
+	       PreparedStatement pstmt = null;
+	       PreparedStatement roomPstmt = null;
+	       int deletedCount = 0;
+
+	       try {
+	           DriverManager.registerDriver(new OracleDriver());
+	           System.out.println("드라이버 로드 성공");
+	           
+	           conn = DriverManager.getConnection(URL, USER, PASSWORD);
+	           System.out.println("DB 연결 성공");
+	         
+	           pstmt = conn.prepareStatement(SQL_SELECT_BY_ROOM);
+	           pstmt.setString(1, customerId);
+	           ResultSet rs = pstmt.executeQuery();
+	           
+	           List<Integer> roomIds = new ArrayList<>();
+	           while (rs.next()) {
+	               roomIds.add(rs.getInt("ROOM_ID"));
+	           }
+	           pstmt = conn.prepareStatement(SQL_DELETE);
+	           pstmt.setString(1, customerId);
+	           deletedCount = pstmt.executeUpdate();
+	           System.out.println(deletedCount + "개의 예약이 삭제되었습니다.");
+
+	           if (!roomIds.isEmpty()) {
+	               String updateRoomAvailability = "UPDATE ROOMS SET ROOM_AVAILABILITY = '가능' WHERE ROOM_ID = ?";
+	               roomPstmt = conn.prepareStatement(updateRoomAvailability);
+	               for (int roomId : roomIds) {
+	                   roomPstmt.setInt(1, roomId);
+	                   roomPstmt.executeUpdate();
+	               }
+	               System.out.println("해당 객실의 예약 상태를 '가능'으로 변경했습니다.");
+	           }
+	           
+
+	       } catch (SQLException e) {
+	           e.printStackTrace();
+	       } finally {
+	           try {
+	               if (roomPstmt != null) roomPstmt.close();
+	               if (pstmt != null) pstmt.close();
+	               if (conn != null) conn.close();
+	           } catch (SQLException e) {
+	               e.printStackTrace();
+	           }
+	       }
+	       return deletedCount;
+	   }
+
+}

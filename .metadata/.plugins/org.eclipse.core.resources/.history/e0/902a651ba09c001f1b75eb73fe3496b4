@@ -1,0 +1,19 @@
+package project_hotel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public interface ReserveDAO {
+    public void reserve(ReserveVO reserveVO);
+    
+    public abstract ArrayList<ReserveVO> select();
+    
+    List<ReserveVO> selectAllByCustomerId(String customerId); 
+    
+	public abstract ReserveVO select(String customerId);
+	
+	public int cancel(int reserveId);
+	
+	public int delete(String customerId);
+
+}

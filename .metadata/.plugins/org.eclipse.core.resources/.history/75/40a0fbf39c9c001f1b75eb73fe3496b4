@@ -1,0 +1,14 @@
+package project_hotel;
+
+public interface RoomQuery {
+    String URL = "jdbc:oracle:thin:@localhost:1521:xe"; // 데이터베이스 URL
+    String USER = "scott"; // 사용자 이름
+    String PASSWORD = "tiger"; // 비밀번호
+    String SELECT_ROOMS = "SELECT ROOM_ID, ROOM_TYPE, ROOM_PRICE, ROOM_AVAILABILITY FROM ROOMS"; // SQL 쿼리
+    String UPDATE_ROOM = "UPDATE ROOMS SET room_availability = ? WHERE room_id = ?";
+    
+}
+
+
+		   
+	

@@ -1,0 +1,5 @@
+package edu.java.member06;
+
+public interface OracleQuery {
+
+}

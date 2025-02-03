@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;MyNumber.java&apos; to &apos;edu.java.access07.AccessMain07.java&apos;&#x0D;&#x0A;- Original project: &apos;Java08_Access&apos;&#x0D;&#x0A;- Destination element: &apos;edu.java.access07.AccessMain07.java&apos;&#x0D;&#x0A;- Original element: &apos;edu.java.access03.MyNumber.java&apos;" description="Copy compilation unit" destination="/src&lt;edu.java.access07{AccessMain07.java" element1="/src&lt;edu.java.access03{MyNumber.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1728353822793" units="1" version="1.0"/>
+</session>

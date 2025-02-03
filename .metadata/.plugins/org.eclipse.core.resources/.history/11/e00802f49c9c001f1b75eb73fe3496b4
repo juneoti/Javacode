@@ -1,0 +1,63 @@
+package project_hotel;
+
+public interface CustomerQuery {
+	   public static final String URL = 
+		         "jdbc:oracle:thin:@localhost:1521:xe";
+		   public static final String USER = "scott";
+		   public static final String PASSWORD = "tiger";
+		   public static final String TABLE_NAME = "CUSTOMERS";
+		   public static final String ID = "CUSTOMER_ID";
+		   public static final String PW = "CUSTOMER_PW";
+		   public static final String NAME = "CUSTOMER_NAME";
+		   public static final String PHONE = "CUSTOMER_PHONE";
+		   public static final String EMAIL = "CUSTOMER_EMAIL";
+		   public static final String BIRTH = "CUSTOMER_BIRTH";
+		   public static final String GENDER = "CUSTOMER_GENDER";
+		   
+		   // 데이터 추가
+		//   INSERT INTO CUSTOMERES
+		//   (ID, PW, NAME, PHONE, EMAIL, BIRTH, GENDER) 
+		//   VALUES (?, ?, ?, ?, ?);
+		   public static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME 
+                   + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+		   // 데이터 수정
+		//   UPDATE CUSTOMERS
+		//   SET PW = ?,
+		//   NAME = ?,
+		//   PHONE = ?,
+		//   EMAIL = ?
+		//   WHERE ID = ?;
+		   public static final String SQL_UPDATE = "UPDATE CUSTOMERS SET CUSTOMER_ID = ?, CUSTOMER_PW = ?, CUSTOMER_NAME = ?, CUSTOMER_PHONE = ?, CUSTOMER_EMAIL = ?, CUSTOMER_BIRTH = ?, CUSTOMER_GENDER = ? WHERE CUSTOMER_ID = ?";
+		   
+		   // 데이터 전체 검색
+		   // SELECT * FROM;
+		   public static final String SQL_SELECT = 
+		         "SELECT * FROM " + TABLE_NAME;
+		   
+		   // 데이터 아이디 검색
+		   // SELECT * FROM
+		   // WHERE ID = ?;
+		   public static final String SQL_SELECT_BY_ID = 
+		         "SELECT * FROM " + TABLE_NAME +
+		         " WHERE " + ID + "= ?";
+		   // 데이터 비번 검색
+		   
+		   public static final String SQL_SELECT_BY_PW = 
+			         "SELECT * FROM " + TABLE_NAME +
+			         " WHERE " + PW + "= ?";
+			   
+		   // 데이터 삭제
+		   // DELETE WHERE ID = ?
+		   public static final String SQL_DELETE = 
+		         "DELETE " + TABLE_NAME + " WHERE " + ID + " = ?";
+		   
+		   public static final String SQL_CHECKID = 
+				   "SELECT COUNT(" + ID + ") FROM "+ TABLE_NAME +
+				   " WHERE " + ID + " = ?";
+		   
+		   public static final String SQL_CHECKPW = 
+				   "SELECT COUNT(" + PW + ") FROM "+ TABLE_NAME +
+				   " WHERE " + PW + " = ?";
+		}
+
+

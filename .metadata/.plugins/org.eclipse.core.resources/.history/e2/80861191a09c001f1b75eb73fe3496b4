@@ -1,0 +1,9 @@
+package project_hotel;
+
+import java.util.ArrayList;
+
+public interface RoomDAO {
+	    public abstract ArrayList<RoomVO> loadRooms();
+	    public void updateRoomAvailability(int roomId, String availability);
+	    public ArrayList<ReviewVO> loadReviewsByRoomId(int roomId);
+	}

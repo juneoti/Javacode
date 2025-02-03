@@ -1,0 +1,64 @@
+package project_hotel;
+
+public class ReserveVO {
+	private int reserveId;
+	private String checkInDate;
+    private String checkOutDate;
+    private String customerId;
+    private int roomId;
+    private double totalPrice;
+
+    public ReserveVO(int reserve_Id, String checkInDate, String checkOutDate, String customerId, int roomId, double totalPrice) {
+    	this.reserveId = reserve_Id;
+    	this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.customerId = customerId;
+        this.roomId = roomId;
+        this.totalPrice = totalPrice;
+    }
+
+    public int getReserveId() {
+    	return reserveId;
+    }
+    
+    public void setReserveId(int reserve_Id) {
+    	this.reserveId = reserve_Id;
+    }
+    
+    public String getCheckInDate() { 
+    return checkInDate; 
+    }
+    
+    public void setCheckInDate(String checkInDate) { 
+    	this.checkInDate = checkInDate; 
+    }
+
+    public String getCheckOutDate() { 
+    	return checkOutDate; 
+    }
+    
+    public void setCheckOutDate(String checkOutDate) { 
+    	this.checkOutDate = checkOutDate; 
+    }
+
+    public String getCustomerId() { 
+    	return customerId; 
+    }
+    public void setCustomerId(String customerId) { 
+    	this.customerId = customerId;
+    }
+
+    public int getRoomId() { 
+    	return roomId; 
+    }
+    public void setRoomId(int roomId) { 
+    	this.roomId = roomId;
+    }
+
+    public double getTotalPrice() { 
+    	return totalPrice; 
+    }
+    public void setTotalPrice(double totalPrice) { 
+    	this.totalPrice = totalPrice; 
+    }
+}
